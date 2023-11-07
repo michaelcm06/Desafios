@@ -13,9 +13,8 @@ import { inicializaPassport } from './config/passport.config.js';
 import passport from 'passport';
 import ConnectMongo from 'connect-mongo'
 import { router as sessionsRouter } from './routes/sessions.router.js';
+import { config } from "./config/config.js";
 
-import dotenv from 'dotenv';
-dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,10 +35,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '/public')));
 
 // Configuración de la base de datos
-import { config } from "../src/config/dotenv.js";
-
-console.log(config.PORT)
-console.log(config)
+app.use(session({
+  secret:'claveSecreta',
+  resave:true, saveUninitialized:true,
+  store: ConnectMongo.create({
+      mongoUrl:'mongodb+srv://Michaelcm2000:Coder123@cluster0.arcaq42.mongodb.net/?retryWrites=true&w=majority&dbName=Tienda',
+      dbName:config.DB_NAME,
+      ttl: 3600
+  })
+}))
 
 inicializaPassport()
 app.use(passport.initialize())
@@ -55,11 +59,14 @@ app.get('/carts', (req, res) => {
   res.render('carts'); 
 });
 
+console.log(config.PORT)
+
+console.log(config)
 
 
 
 // Puerto de escucha
-const PORT = process.env.PORT || 8080;
+const PORT = config.PORT;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

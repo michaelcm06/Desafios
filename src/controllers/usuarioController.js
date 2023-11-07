@@ -1,4 +1,4 @@
-import { usuariosService } from "../service/Usuario.service";
+import { usuariosService } from "../service/Usuario.service.js";
 
 async function getUsers(req, res) {
     try {
@@ -28,19 +28,19 @@ async function getUserByEmail(req, res) {
 }
 
 async function postUser(req, res) {
-    let { nombre, email, password } = req.body;
-    if (!nombre || !email || !password) return res.status(400).json({ error: "Complete todos los datos" });
+    let { nombre, email } = req.body;
+    if (!nombre || !email) return res.status(400).json({ error: "Complete todos los datos" });
 
     try {
         let usuarios = await usuariosService.getUsers();
         let existe = usuarios.find(u => u.email === email);
         if (existe) return res.status(400).json({ error: `Usuario con email ${email} existente en BD` });
 
-        let usuarioNuevo = await usuariosService.createUser(nombre, email, password);
+        let usuarioNuevo = await usuariosService.createUser(nombre, email);
         return res.status(201).json({ usuarioNuevo });
     } catch (error) {
         return res.status(500).json({ error: "Error inesperado", detalle: error.message });
     }
 }
 
-export default { getUsers, postUser, getUserById, getUserByEmail };
+export default { getUsers, getUserById, getUserByEmail, postUser };
