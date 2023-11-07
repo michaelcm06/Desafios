@@ -59,11 +59,8 @@ app.get('/carts', (req, res) => {
   res.render('carts'); 
 });
 
-console.log(config.PORT)
 
 console.log(config)
-
-
 
 // Puerto de escucha
 const PORT = config.PORT;
